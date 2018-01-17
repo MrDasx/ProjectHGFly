@@ -1,7 +1,7 @@
 ManifestFileVersion: 0
-CRC: 3968918535
+CRC: 2800622754
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
-      Name: prefabs
+      Name: mode_prefabs
       Dependencies: {}

@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class HGCamera :  MonoBehaviour {
     GameObject CharacterEntity;
-    const float CameraHeight = 3f;
-    const float CameraDistance = -10f;
+    //数值配置----------
+    public float CameraHeight = 3f;
+    public float CameraDistance = -10f;
+    //--------------------
+
 	// Use this for initialization
 	void Start () {
         CharacterEntity = GameObject.Find("Character");
@@ -13,10 +16,6 @@ public class HGCamera :  MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
-
-    void FixedUpdate() {
-        this.gameObject.GetComponent<Transform>().position = new Vector3(CharacterEntity.transform.position.x, CameraHeight, CameraDistance);
+        this.gameObject.transform.position = new Vector3(CharacterEntity.transform.position.x, CameraHeight, CameraDistance);
     }
 }

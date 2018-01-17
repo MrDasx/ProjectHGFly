@@ -2,19 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//记录人物数据
 public class HGCharacter : MonoBehaviour {
-    
+
+    //人物状态----------
+    public int Score=0;
+    private HGBlockType GameMode=HGBlockType.Mode_Pause;
+     //-------------------
+
+
 	// Use this for initialization
 	void Start () {
-        GetComponent<Rigidbody>().velocity = new Vector3(3f, 0f);
+        Score = 0;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
-
-    void OnCollisionEnter(Collision collision) {
-        print("got it");
+    public void UpdateMode(HGBlockType mode) {
+        GameMode = mode;
+    }
+    public HGBlockType GetMode() {
+        return GameMode;
     }
 }
