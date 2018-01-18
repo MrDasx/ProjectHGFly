@@ -14,10 +14,12 @@ public class HGCharacterController : MonoBehaviour {
     //--------------------
 
     HGCharacter Charc;
+	GameObject Environ;
     // Use this for initialization
     void Start () {
         Charc = this.gameObject.GetComponent<HGCharacter>();
-        Charc.transform.position = new Vector3(0f, StartHeight, 0f);
+		Environ = GameObject.Find("Environment");
+		Charc.transform.position = new Vector3(0f, StartHeight, 0f);
     }
 	
 	// Update is called once per frame
@@ -46,6 +48,7 @@ public class HGCharacterController : MonoBehaviour {
                     GetComponent<Transform>().position = new Vector3(0f, StartHeight, 0f);
                     GetComponent<ConstantForce>().force = new Vector3(0f, 0f, 0f);
                     GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
+					Environ.GetComponent<HGEnvironment>().Environ_Init();
                     Charc.UpdateMode(HGBlockType.Mode_Pause);
                 }
                 break;
