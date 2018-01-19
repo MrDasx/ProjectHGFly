@@ -7,7 +7,7 @@ public class HGAssetBundleLoader : MonoBehaviour {
 
     private static HGAssetBundleLoader ins;
 	private static AssetBundle bundle;
-	private static string FileName="mode_prefabs";
+	private static string FileName="prefabs";
 	private static string BundleURL =
 #if UNITY_ANDROID
                     "jar:file://" + Application.dataPath + "!/assets/";

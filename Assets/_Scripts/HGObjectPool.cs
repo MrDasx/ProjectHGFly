@@ -18,13 +18,13 @@ public class HGObjectPool : MonoBehaviour {
 		GameObject res;
 		res = pool.Find(tar => tar.name.Equals(target.name+"(Clone)"));
 		if (res == null) {
-			print("unmatched");
+			print("unmatched\n");
 			res = Instantiate(target);
 		} else {
-			print("matched");
-			res.SetActive(true);
+			print("matched\n");
 			pool.Remove(res);
 		}
+		res.SetActive(true);
 		return res;
 	}
 

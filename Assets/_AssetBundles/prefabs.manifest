@@ -1,0 +1,42 @@
+ManifestFileVersion: 0
+CRC: 3900191598
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: a416f7e124e25c8fab9d583d5aa10e4b
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 3a73d467faba534e58f54a26dc1fb935
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: b516be135ca858e4c8be71d9a7b4b359, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 5bc1a6ff33ce5c94c8eac630c6741f81, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 134
+  Script: {instanceID: 0}
+- Class: 136
+  Script: {instanceID: 0}
+Assets:
+- Assets/_Resourses/_Prefabs/Start_Prefab.prefab
+- Assets/_Resourses/_Prefabs/Flypee_Prefab.prefab
+- Assets/_Resourses/_Prefabs/Coins_.prefab
+Dependencies: []

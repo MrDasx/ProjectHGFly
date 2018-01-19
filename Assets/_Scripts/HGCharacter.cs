@@ -7,19 +7,9 @@ public class HGCharacter : MonoBehaviour {
 
     //人物状态----------
     public int Score=0;
-    private HGBlockType GameMode=HGBlockType.Mode_Pause;
+	private HGBlockType GameMode=HGBlockType.Mode_Pause;
      //-------------------
 
-
-	// Use this for initialization
-	void Start () {
-        Score = 0;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
     public void UpdateMode(HGBlockType mode) {
         GameMode = mode;
     }

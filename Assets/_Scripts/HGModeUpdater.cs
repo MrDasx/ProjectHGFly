@@ -15,6 +15,7 @@ public class HGModeUpdater : MonoBehaviour {
 	}
 
     void OnTriggerEnter(Collider collider) {
-		print("mode updated");
+		print("mode updated\n");
+		GameObject.FindWithTag("Environment_").GetComponent<HGEnvironment>().Environ_Update();
     }
 }

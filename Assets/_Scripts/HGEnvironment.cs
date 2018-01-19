@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class HGEnvironment : MonoBehaviour {
     //数值配置----------
-    private float width = 30.0f;
-    private float blank = 4f;
+    public static float width = 30.0f;
+	public static float blank = 4f;
     //--------------------
 	int posX = 0;
-	private Queue<GameObject> objQueue = new Queue<GameObject>();
+	int passed = 0;
 	GameObject CharacterEntity;
 	// Use this for initialization
 	void Start () {
@@ -22,33 +22,40 @@ public class HGEnvironment : MonoBehaviour {
 	}
     public void Environ_Init() {
 		posX = 0;
-		while (objQueue.Count >0)
-			HGObjectPool.GetIns().Depool(objQueue.Dequeue());
-        GameObject objTemp = HGObjectPool.GetIns().Enpool(HGBlock.getBlock(HGBlockType.Mode_Start) as GameObject);
-        objTemp.GetComponent<Transform>().position = new Vector3(posX++*width,0f,0f);
-		objQueue.Enqueue(objTemp);
+		passed = 0;
+		CharacterEntity.GetComponent<HGCharacter>().Score = 0;
+		while (HGBlock.BlockQueue.Count >0)
+			HGObjectPool.GetIns().Depool(HGBlock.BlockQueue.Dequeue());
+		while (HGBlock.CoinQueue.Count > 0)
+			HGObjectPool.GetIns().Depool(HGBlock.CoinQueue.Dequeue());
+		GameObject objTemp = HGObjectPool.GetIns().Enpool(HGBlock.getBlock(HGBlockType.Mode_Start) as GameObject);
+		objTemp.GetComponent<Transform>().position = new Vector3(posX++*width,0f,0f);
+		HGBlock.BlockQueue.Enqueue(objTemp);
 		GameObject objTemp2 = HGBlock.getBlock(HGBlockType.Mode_Flypee) as GameObject;
-        while (posX <= 5) {
+		while (posX <= 2) {
 			GameObject objTemp1 = HGObjectPool.GetIns().Enpool(objTemp2);
-            objTemp1.GetComponent<Transform>().position = new Vector3(posX++ * width, 0f, 0f);
+			objTemp1.GetComponent<Transform>().position = new Vector3(posX++ * width, 0f, 0f);
 			HGBlock.FlypeeSetup(ref objTemp1,blank);
-			objQueue.Enqueue(objTemp1);
+			HGBlock.BlockQueue.Enqueue(objTemp1);
         }
     }
     public void Environ_Update() {
-		if (objQueue.Peek().transform.position.x - CharacterEntity.transform.position.x < -width) {
-
-		}
-    }
-	public void Environ_Reset() {
-		posX = 0;
-		Environ_Init();
+		passed++;
+		if (passed <= 1) return;
+		HGObjectPool.GetIns().Depool(HGBlock.BlockQueue.Dequeue());
+		GameObject objTemp1 = HGObjectPool.GetIns().Enpool(HGBlock.getBlock(HGBlockType.Mode_Flypee) as GameObject);
+		objTemp1.GetComponent<Transform>().position = new Vector3(posX++ * width, 0f, 0f);
+		HGBlock.CoinSetdown(3);
+		HGBlock.FlypeeSetup(ref objTemp1, blank);
+		HGBlock.BlockQueue.Enqueue(objTemp1);
 	}
 }
 
 public class HGBlock {
 	private static System.Random ra = new System.Random();
-    public static Object getBlock(HGBlockType Type) {
+	public static Queue<GameObject> CoinQueue = new Queue<GameObject>();
+	public static Queue<GameObject> BlockQueue = new Queue<GameObject>();
+	public static Object getBlock(HGBlockType Type) {
         if (Type == HGBlockType.Mode_Flypee) {
             return HGAssetBundleLoader.GetIns().GetBundle().LoadAsset("Flypee_Prefab.prefab");
         } else if (Type == HGBlockType.Mode_Start) {
@@ -57,15 +64,26 @@ public class HGBlock {
             return null;
     }
 	public static void FlypeeSetup(ref GameObject target,float blank){
-		float t = (float)ra.Next(50, 150) / 100f * 3f;
-		target.transform.Find("Ob1").GetComponent<Transform>().localScale = new Vector3(3f, t, 3f);
-		target.transform.Find("Ob1 (1)").GetComponent<Transform>().localScale = new Vector3(3f, 10f - t - blank, 3f);
-		t = (float)ra.Next(50, 150) / 100f * 3f;
-		target.transform.Find("Ob2").GetComponent<Transform>().localScale = new Vector3(3f, t, 3f);
-		target.transform.Find("Ob2 (1)").GetComponent<Transform>().localScale = new Vector3(3f, 10f - t - blank, 3f);
-		t = (float)ra.Next(50, 150) / 100f * 3f;
-		target.transform.Find("Ob3").GetComponent<Transform>().localScale = new Vector3(3f, t, 3f);
-		target.transform.Find("Ob3 (1)").GetComponent<Transform>().localScale = new Vector3(3f, 10f - t - blank, 3f);
+		float t;
+		for (int i = 1; i <= 3; i++) {
+			t = (float)ra.Next(20, 200) / 100f * 3f;
+			target.transform.Find(System.String.Format("Ob{0}", i)).GetComponent<Transform>().localScale = new Vector3(3f, t, 3f);
+			target.transform.Find(System.String.Format("Ob{0} (1)", i)).GetComponent<Transform>().localScale = new Vector3(3f, 10f - t - blank, 3f);
+			CoinSetup(target.transform.Find(System.String.Format("Ob{0}", i)).transform.position.x,t,3);
+		}
+	}
+	public static void CoinSetup(float posx,float posy,float num) {
+		GameObject coin = HGAssetBundleLoader.GetIns().GetBundle().LoadAsset("Coins_.prefab") as GameObject;
+		GameObject coinT;
+		for (int i = 1; i <= num;i++) {
+			coinT = HGObjectPool.GetIns().Enpool(coin);
+			coinT.transform.position = new Vector3(posx-HGEnvironment.width/(3*num)*(i-1),posy+(float)ra.Next(50,150)/100*HGEnvironment.blank/2);
+			CoinQueue.Enqueue(coinT);
+		}
+	}
+	public static void CoinSetdown(float num) {
+		for (int i=1;i<=(int)num*3;i++)
+			HGObjectPool.GetIns().Depool(CoinQueue.Dequeue());
 	}
 }
 
