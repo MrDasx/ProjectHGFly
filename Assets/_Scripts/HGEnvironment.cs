@@ -23,7 +23,7 @@ public class HGEnvironment : MonoBehaviour {
     public void Environ_Init() {
 		posX = 0;
 		passed = 0;
-		CharacterEntity.GetComponent<HGCharacter>().Score = 0;
+		CharacterEntity.GetComponent<HGCharacter>().ResetScore();
 		while (HGBlock.BlockQueue.Count >0)
 			HGObjectPool.GetIns().Depool(HGBlock.BlockQueue.Dequeue());
 		while (HGBlock.CoinQueue.Count > 0)
@@ -45,9 +45,10 @@ public class HGEnvironment : MonoBehaviour {
 		HGObjectPool.GetIns().Depool(HGBlock.BlockQueue.Dequeue());
 		GameObject objTemp1 = HGObjectPool.GetIns().Enpool(HGBlock.getBlock(HGBlockType.Mode_Flypee) as GameObject);
 		objTemp1.GetComponent<Transform>().position = new Vector3(posX++ * width, 0f, 0f);
-		HGBlock.CoinSetdown(3);
 		HGBlock.FlypeeSetup(ref objTemp1, blank);
 		HGBlock.BlockQueue.Enqueue(objTemp1);
+		if (passed <= 2) return;
+		HGBlock.CoinSetdown(3);
 	}
 }
 
@@ -75,10 +76,14 @@ public class HGBlock {
 	public static void CoinSetup(float posx,float posy,float num) {
 		GameObject coin = HGAssetBundleLoader.GetIns().GetBundle().LoadAsset("Coins_.prefab") as GameObject;
 		GameObject coinT;
-		for (int i = 1; i <= num;i++) {
+		for (int i = -1; i <= -2+num;i++) {
 			coinT = HGObjectPool.GetIns().Enpool(coin);
-			coinT.transform.position = new Vector3(posx-HGEnvironment.width/(3*num)*(i-1),posy+(float)ra.Next(50,150)/100*HGEnvironment.blank/2);
+			coinT.transform.position = new Vector3(posx+HGEnvironment.width/(3*num)*i,posy+(float)ra.Next(50,150)/100*HGEnvironment.blank/2);
 			CoinQueue.Enqueue(coinT);
+		}
+		for (int i = 1; i <= num; i++) {
+			coinT = HGObjectPool.GetIns().Enpool(coin);
+			HGObjectPool.GetIns().Depool(coinT);
 		}
 	}
 	public static void CoinSetdown(float num) {

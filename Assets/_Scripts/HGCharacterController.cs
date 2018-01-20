@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 //控制人物移动
 public class HGCharacterController : MonoBehaviour {
@@ -9,6 +10,7 @@ public class HGCharacterController : MonoBehaviour {
 	[SerializeField] private float SpeedLimit;
 	[SerializeField] private float JumpForce;
 	[SerializeField] private float Gravity;
+	[SerializeField] private float DropForce;
 	[SerializeField] private float StartHeight;
 	[SerializeField] private HGBlockType STARTMODE = HGBlockType.Mode_Flypee;
     //--------------------
@@ -16,14 +18,19 @@ public class HGCharacterController : MonoBehaviour {
     HGCharacter Charc;
 	GameObject Environ;
     // Use this for initialization
-    void Start () {
-        Charc = this.gameObject.GetComponent<HGCharacter>();
+
+	void Start() {
+		Charc = this.gameObject.GetComponent<HGCharacter>();
 		Environ = GameObject.FindWithTag("Environment_");
 		Charc.transform.position = new Vector3(0f, StartHeight, 0f);
-    }
-	
+	}
+
 	// Update is called once per frame
 	void Update () {
+		if (Input.GetKey(KeyCode.Escape)) {
+			SceneManager.LoadScene(0);
+			return;
+		}
         switch (Charc.GetMode()) {
             case HGBlockType.Mode_Pause:
                 GetComponent<ConstantForce>().force = new Vector3(0f, 0f, 0f);
@@ -34,7 +41,8 @@ public class HGCharacterController : MonoBehaviour {
                 }
                 break;
             case HGBlockType.Mode_Flypee:
-                if (Input.GetKeyDown(KeyCode.Space)) {
+				transform.Rotate(Vector3.back * MoveSpeed/2f, Space.World);
+				if (Input.GetKeyDown(KeyCode.Space)) {
                     Vector3 VecTemp = new Vector3(0f, (GetComponent<Rigidbody>().velocity.y < SpeedLimit ? JumpForce : 0f), 0f);
                     GetComponent<Rigidbody>().AddForce(VecTemp);
                 }
@@ -49,8 +57,9 @@ public class HGCharacterController : MonoBehaviour {
                 Charc.UpdateMode(HGBlockType.Mode_Flypee);
                 break;
             case HGBlockType.Mode_End:
-                GetComponent<Rigidbody>().velocity -= new Vector3(0f, GetComponent<Rigidbody>().velocity.x);
-                if (Input.GetKeyDown(KeyCode.S)) {
+                GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f);
+				GetComponent<ConstantForce>().force = new Vector3(0f, DropForce);
+				if (Input.GetKeyDown(KeyCode.S)) {
 					print("Reseted\n");
                     GetComponent<Transform>().position = new Vector3(0f, StartHeight, 0f);
                     GetComponent<ConstantForce>().force = new Vector3(0f, 0f, 0f);

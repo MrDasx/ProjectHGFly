@@ -14,7 +14,6 @@ public class HGCoin : MonoBehaviour {
 
 	void OnTriggerEnter(Collider col) {
 		transform.parent.gameObject.SetActive(false);
-		GameObject.FindWithTag("Character_").GetComponent<HGCharacter>().Score++;
-		print(string.Format("{0}\n", GameObject.FindWithTag("Character_").GetComponent<HGCharacter>().Score));
+		GameObject.FindWithTag("Character_").GetComponent<HGCharacter>().UpdateScore();
 	}
 }
