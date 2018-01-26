@@ -18,10 +18,11 @@ public class HGObjectPool : MonoBehaviour {
 		GameObject res;
 		res = pool.Find(tar => tar.name.Equals(target.name+"(Clone)"));
 		if (res == null) {
-			print("unmatched\n");
+			//print("unmatched\n");
 			res = Instantiate(target);
 		} else {
-			print("matched\n");
+			//print("matched\n");
+			res.transform.SetParent(null);
 			pool.Remove(res);
 		}
 		res.SetActive(true);
@@ -30,6 +31,12 @@ public class HGObjectPool : MonoBehaviour {
 
 	public void Depool(GameObject target) {
 		target.SetActive(false);
+		target.transform.SetParent(GetIns().gameObject.transform);
 		pool.Add(target);
+	}
+
+	public void Clear() {
+		pool.Clear();
+		print("erased");
 	}
 }

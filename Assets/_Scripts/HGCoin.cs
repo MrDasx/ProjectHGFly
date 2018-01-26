@@ -13,7 +13,11 @@ public class HGCoin : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider col) {
-		transform.parent.gameObject.SetActive(false);
+		GetComponent<AudioSource>().enabled = true;
+		GetComponent<AudioSource>().clip = HGAudioLoader.Load("get_coin");
+		GetComponent<AudioSource>().Play();
+		//transform.parent.gameObject.SetActive(false);
+		transform.gameObject.GetComponent<Renderer>().enabled = false;
 		GameObject.FindWithTag("Character_").GetComponent<HGCharacter>().UpdateScore();
 	}
 }

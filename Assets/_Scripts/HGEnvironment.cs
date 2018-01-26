@@ -9,10 +9,12 @@ public class HGEnvironment : MonoBehaviour {
     //--------------------
 	int posX = 0;
 	int passed = 0;
-	GameObject CharacterEntity;
+	GameObject CharacterEntity,EnvironEntity;
 	// Use this for initialization
 	void Start () {
 		CharacterEntity = GameObject.Find("Character");
+		EnvironEntity = GameObject.FindWithTag("Environment_");
+		HGAudioLoader.Init();
 		Invoke("Environ_Init", 0f);
 	}
 
@@ -30,12 +32,14 @@ public class HGEnvironment : MonoBehaviour {
 			HGObjectPool.GetIns().Depool(HGBlock.CoinQueue.Dequeue());
 		GameObject objTemp = HGObjectPool.GetIns().Enpool(HGBlock.getBlock(HGBlockType.Mode_Start) as GameObject);
 		objTemp.GetComponent<Transform>().position = new Vector3(posX++*width,0f,0f);
+		objTemp.transform.SetParent(EnvironEntity.transform);
 		HGBlock.BlockQueue.Enqueue(objTemp);
 		GameObject objTemp2 = HGBlock.getBlock(HGBlockType.Mode_Flypee) as GameObject;
 		while (posX <= 2) {
 			GameObject objTemp1 = HGObjectPool.GetIns().Enpool(objTemp2);
 			objTemp1.GetComponent<Transform>().position = new Vector3(posX++ * width, 0f, 0f);
 			HGBlock.FlypeeSetup(ref objTemp1,blank);
+			objTemp1.transform.SetParent(EnvironEntity.transform);
 			HGBlock.BlockQueue.Enqueue(objTemp1);
         }
     }
@@ -46,6 +50,7 @@ public class HGEnvironment : MonoBehaviour {
 		GameObject objTemp1 = HGObjectPool.GetIns().Enpool(HGBlock.getBlock(HGBlockType.Mode_Flypee) as GameObject);
 		objTemp1.GetComponent<Transform>().position = new Vector3(posX++ * width, 0f, 0f);
 		HGBlock.FlypeeSetup(ref objTemp1, blank);
+		objTemp1.transform.SetParent(EnvironEntity.transform);
 		HGBlock.BlockQueue.Enqueue(objTemp1);
 		if (passed <= 2) return;
 		HGBlock.CoinSetdown(3);
@@ -58,9 +63,9 @@ public class HGBlock {
 	public static Queue<GameObject> BlockQueue = new Queue<GameObject>();
 	public static Object getBlock(HGBlockType Type) {
         if (Type == HGBlockType.Mode_Flypee) {
-            return HGAssetBundleLoader.GetIns().GetBundle().LoadAsset("Flypee_Prefab.prefab");
+            return HGAssetBundleLoader.GetIns().GetBundle("prefabs").LoadAsset("Flypee_Prefab.prefab");
         } else if (Type == HGBlockType.Mode_Start) {
-            return HGAssetBundleLoader.GetIns().GetBundle().LoadAsset("Start_Prefab.prefab");
+            return HGAssetBundleLoader.GetIns().GetBundle("prefabs").LoadAsset("Start_Prefab.prefab");
         } else
             return null;
     }
@@ -74,11 +79,13 @@ public class HGBlock {
 		}
 	}
 	public static void CoinSetup(float posx,float posy,float num) {
-		GameObject coin = HGAssetBundleLoader.GetIns().GetBundle().LoadAsset("Coins_.prefab") as GameObject;
+		GameObject coin = HGAssetBundleLoader.GetIns().GetBundle("prefabs").LoadAsset("Coins_.prefab") as GameObject;
 		GameObject coinT;
 		for (int i = -1; i <= -2+num;i++) {
 			coinT = HGObjectPool.GetIns().Enpool(coin);
 			coinT.transform.position = new Vector3(posx+HGEnvironment.width/(3*num)*i,posy+(float)ra.Next(50,150)/100*HGEnvironment.blank/2);
+			coinT.transform.SetParent(GameObject.FindWithTag("Environment_").transform);
+			coinT.transform.GetChild(0).gameObject.GetComponent<Renderer>().enabled = true;
 			CoinQueue.Enqueue(coinT);
 		}
 		for (int i = 1; i <= num; i++) {
@@ -89,6 +96,10 @@ public class HGBlock {
 	public static void CoinSetdown(float num) {
 		for (int i=1;i<=(int)num*3;i++)
 			HGObjectPool.GetIns().Depool(CoinQueue.Dequeue());
+	}
+	public static void Clear() {
+		CoinQueue.Clear();
+		BlockQueue.Clear();
 	}
 }
 
